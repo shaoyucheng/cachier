@@ -104,3 +104,15 @@ Pipfile.lock
 
 # annoying mac stuff
 .DS_Store
+
+# IDE
+.idea/
+.idea/workspace.xml
+workspace.xml
+
+# pytest
+.pytest_cache/
+tests/.coverage
+tests/cov.xml
+
+

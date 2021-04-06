@@ -81,7 +81,7 @@ class _PickleCore(_BaseCore):
         def on_modified(self, event):  # skipcq: PYL-W0613
             self._check_calculation()
 
-    def __init__(self, stale_after, next_time, reload, cache_dir):
+    def __init__(self, stale_after, next_time, reload, cache_dir, module_name=None):
         _BaseCore.__init__(self, stale_after, next_time)
         self.cache = None
         self.reload = reload
@@ -92,30 +92,34 @@ class _PickleCore(_BaseCore):
         self.lock = threading.RLock()
         self.cache_fname = None
         self.cache_fpath = None
+        # used for construction of cache file name
+        self.module_name = module_name
 
     def _cache_fname(self):
-        if self.cache_fname is None:
-            self.cache_fname = '.{}.{}'.format(
-                self.func.__module__, self.func.__name__
-            )
+        module_tag = self.func.__module__
+        if self.module_name is not None:
+            module_tag = self.module_name
+        self.cache_fname = '.{}.{}'.format(
+            module_tag, self.func.__name__
+        )
         return self.cache_fname
 
     def _cache_fpath(self):
-        if self.cache_fpath is None:
-            # print(EXPANDED_CACHIER_DIR)
-            if not os.path.exists(self.expended_cache_dir):
-                os.makedirs(self.expended_cache_dir)
-            self.cache_fpath = os.path.abspath(
-                os.path.join(
-                    os.path.realpath(self.expended_cache_dir),
-                    self._cache_fname(),
-                )
+        # print(EXPANDED_CACHIER_DIR)
+        if not os.path.exists(self.expended_cache_dir):
+            os.makedirs(self.expended_cache_dir)
+        self.cache_fpath = os.path.abspath(
+            os.path.join(
+                os.path.realpath(self.expended_cache_dir),
+                self._cache_fname(),
             )
+        )
         return self.cache_fpath
 
     def _reload_cache(self):
         with self.lock:
             fpath = self._cache_fpath()
+            # print(fpath)
             try:
                 with portalocker.Lock(fpath, mode='rb') as cache_file:
                     try:

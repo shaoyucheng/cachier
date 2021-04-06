@@ -143,6 +143,10 @@ def cachier(
             ignore_cache = kwds.pop('ignore_cache', False)
             overwrite_cache = kwds.pop('overwrite_cache', False)
             verbose_cache = kwds.pop('verbose_cache', False)
+            # if defined a module_name, it will relace the default value from __module__
+            module_name = kwds.pop('module_name', None)
+            core.module_name = module_name
+            # print(core.module_name)
             _print = lambda x: None  # skipcq: FLK-E731  # noqa: E731
             if verbose_cache:
                 _print = print

@@ -427,3 +427,13 @@ def test_callable_hash_param():
     value_b = _params_with_dataframe(1, df=df_b)
 
     assert value_a == value_b  # same content --> same key
+
+
+def test_customized_module_name():
+    module_name = "my_module"
+    val1 = _random_num(module_name=module_name, verbose_cache=True)
+    val2 = _random_num(module_name=module_name, verbose_cache=True)
+    val3 = _random_num(verbose_cache=True)
+    assert val1 == val2
+    assert val1 != val3
+
